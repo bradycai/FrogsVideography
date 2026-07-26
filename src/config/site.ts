@@ -297,9 +297,12 @@ export const ABOUT = {
     'Working with us is a creative experience focused on authenticity. We believe that we are not selling our clients a product, we believe we are working together with you to create art. Get in touch and let’s create.',
   ],
   signature: '— David & Mike',
+  // Filenames describe the actual photo so the mapping is unambiguous:
+  //   about-marina.jpg          = the shipyard / boats & cranes photo
+  //   about-yellow-building.jpg = the peace-sign / yellow-building photo
   portraits: [
-    { src: '/images/about-david.jpg', name: 'David', role: 'Co-Founder', alt: 'David, co-founder of Frogs Videography' },
-    { src: '/images/about-mike.jpg', name: 'Mike', role: 'Co-Founder', alt: 'Mike, co-founder of Frogs Videography' },
+    { src: '/images/about-marina.jpg', name: 'David', role: 'Co-Founder', alt: 'David, co-founder of Frogs Videography' },
+    { src: '/images/about-yellow-building.jpg', name: 'Mike', role: 'Co-Founder', alt: 'Mike, co-founder of Frogs Videography' },
   ],
 } as const;
 
