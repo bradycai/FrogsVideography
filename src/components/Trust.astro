@@ -1,0 +1,31 @@
+---
+import { TRUST, LINKS } from '../config/site';
+---
+
+<section aria-label="Trusted storytelling">
+  <div class="wrap">
+    <div class="reveal">
+      <span class="eyebrow">{TRUST.eyebrow}</span>
+      <h2 class="h-md">{TRUST.heading}</h2>
+    </div>
+    <div class="stat-grid reveal d1">
+      {
+        TRUST.stats.map((s) => (
+          <div class="cell">
+            <div class:list={['num', { green: s.accent }]}>
+              <span class="count" data-to={s.to} data-suffix={s.suffix}>0</span>
+            </div>
+            <div class="lab">{s.label}</div>
+          </div>
+        ))
+      }
+    </div>
+    <div class="reviews-row reveal d2">
+      <span class="gbadge"><span class="stars">★★★★★</span> {TRUST.ratingBadge}</span>
+      <span class="gbadge">Providence · Boston · New Bedford · Newport</span>
+      <a class="btn btn-ghost" href={LINKS.googleReviews} target="_blank" rel="noopener">
+        {TRUST.reviewsCtaLabel} <span class="arrow">→</span>
+      </a>
+    </div>
+  </div>
+</section>

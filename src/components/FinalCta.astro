@@ -1,0 +1,14 @@
+---
+import { FINAL_CTA } from '../config/site';
+---
+
+<section class="final" aria-label="Ready to tell your story">
+  <div class="fin-in reveal">
+    <span class="eyebrow" style="justify-content:center">{FINAL_CTA.eyebrow}</span>
+    <h2>{FINAL_CTA.heading}</h2>
+    <p>{FINAL_CTA.body}</p>
+    <a class="btn btn-primary" href={FINAL_CTA.cta.href} target="_blank" rel="noopener">
+      {FINAL_CTA.cta.label} <span class="arrow">→</span>
+    </a>
+  </div>
+</section>

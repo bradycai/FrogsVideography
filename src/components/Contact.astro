@@ -1,0 +1,76 @@
+---
+import { CONTACT, BUSINESS, LINKS, SERVICES } from '../config/site';
+
+// Contact details are optional — only rendered when set in src/config/site.ts.
+const email: string = BUSINESS.email;
+const phone: string = BUSINESS.phone;
+const telHref = phone ? 'tel:' + phone.replace(/[^+\d]/g, '') : '';
+---
+
+<section class="contact" id="contact" aria-label="Contact us">
+  <div class="wrap split" style="align-items:start">
+    <div class="reveal">
+      <span class="eyebrow">{CONTACT.eyebrow}</span>
+      <h2 class="h-lg">{CONTACT.heading}</h2>
+      <p class="lead muted" style="margin-top:20px">{CONTACT.body}</p>
+
+      <div class="contact-info">
+        <a class="btn btn-primary" href={CONTACT.primaryCta.href} target="_blank" rel="noopener">
+          {CONTACT.primaryCta.label} <span class="arrow">→</span>
+        </a>
+        <div class="contact-lines">
+          {email && <a class="contact-line" href={`mailto:${email}`}>✉ {email}</a>}
+          {phone && <a class="contact-line" href={telHref}>☎ {phone}</a>}
+          <span class="contact-line muted">Serving {BUSINESS.areaServed.join(' & ')} — and all of New England.</span>
+        </div>
+      </div>
+    </div>
+
+    <!--
+      CONTACT FORM — front-end only (no backend connected yet).
+      To make submissions deliver, connect ONE of:
+        • Formspree   → set <form action="https://formspree.io/f/XXXX" method="POST">
+        • Netlify Forms → add `netlify` attribute (only works on Netlify hosting)
+        • EdgeOne Pages Function / Web3Forms / Basin → set the action URL
+      Until then, the script in src/scripts/contact.js falls back to a mailto:
+      draft when BUSINESS.email is set, or points visitors to Calendly.
+      See README.md → "Contact form".
+    -->
+    <form
+      class="contact-form reveal d1"
+      id="contactForm"
+      data-email={email}
+      data-calendly={LINKS.calendly}
+      novalidate
+    >
+      <div class="cf-row">
+        <div class="cf-field">
+          <label for="cfName">Name</label>
+          <input id="cfName" name="name" type="text" autocomplete="name" required />
+        </div>
+        <div class="cf-field">
+          <label for="cfEmail">Email</label>
+          <input id="cfEmail" name="email" type="email" autocomplete="email" required />
+        </div>
+      </div>
+      <div class="cf-field">
+        <label for="cfOrg">Organization</label>
+        <input id="cfOrg" name="organization" type="text" autocomplete="organization" />
+      </div>
+      <div class="cf-field">
+        <label for="cfType">What are you looking to create?</label>
+        <select id="cfType" name="projectType">
+          <option value="">Select a project type…</option>
+          {SERVICES.items.map((s) => <option value={s.title}>{s.title}</option>)}
+          <option value="Something else">Something else</option>
+        </select>
+      </div>
+      <div class="cf-field">
+        <label for="cfMsg">Tell us about your project</label>
+        <textarea id="cfMsg" name="message" rows="4" required></textarea>
+      </div>
+      <button class="btn btn-primary" type="submit">Send message <span class="arrow">→</span></button>
+      <p class="cf-status" id="cfStatus" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>

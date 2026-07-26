@@ -1,0 +1,19 @@
+---
+import { REELS } from '../config/site';
+import VideoCard from './VideoCard.astro';
+---
+
+<section aria-label="Our processes" style="padding-top:0">
+  <div class="wrap">
+    <div class="rail-head reveal">
+      <div>
+        <span class="eyebrow">{REELS.eyebrow}</span>
+        <h2 class="h-md">{REELS.heading}</h2>
+      </div>
+      <span class="rail-hint" aria-hidden="true">{REELS.hint}</span>
+    </div>
+    <div class="rail" id="rail" role="list">
+      {REELS.items.map((v) => <VideoCard id={v.id} tag={v.tag} title={v.title} role="listitem" />)}
+    </div>
+  </div>
+</section>

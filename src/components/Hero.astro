@@ -1,0 +1,29 @@
+---
+import { HERO } from '../config/site';
+---
+
+<section class="hero" id="hero" aria-label="Introduction">
+  <div class="hero-bg" id="heroBg" data-video={HERO.backgroundVideoId} aria-hidden="true"></div>
+  <div class="hero-inner reveal">
+    <span class="eyebrow">{HERO.eyebrow}</span>
+    <h1>{HERO.headingLead} <span class="green">{HERO.headingAccent}</span></h1>
+    <p class="hero-sub reveal d2">{HERO.sub}</p>
+    <div class="hero-cta reveal d3">
+      <a class="btn btn-primary" href={HERO.primaryCta.href} target="_blank" rel="noopener">
+        {HERO.primaryCta.label} <span class="arrow">→</span>
+      </a>
+      <a class="btn btn-ghost" href={HERO.secondaryCta.href}>{HERO.secondaryCta.label}</a>
+    </div>
+  </div>
+  <div class="hero-stats reveal d4">
+    {
+      HERO.stats.map((s) => (
+        <div class="st">
+          <b><span class="count" data-to={s.to} data-suffix={s.suffix}>0</span></b>
+          <span>{s.label}</span>
+        </div>
+      ))
+    }
+  </div>
+  <div class="hero-scroll" aria-hidden="true"><span class="m"></span>Scroll</div>
+</section>

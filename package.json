@@ -1,0 +1,32 @@
+{
+  "name": "frogs-videography",
+  "version": "1.0.0",
+  "description": "Marketing website for Frogs Videography — a Massachusetts & Rhode Island video production company.",
+  "type": "module",
+  "engines": {
+    "node": ">=18.14.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "lint": "eslint . --ext .js,.ts,.astro",
+    "format": "prettier --write \"**/*.{astro,ts,js,css,md,json}\""
+  },
+  "dependencies": {
+    "astro": "^5.0.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/sitemap": "^3.2.1",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "eslint": "^8.57.1",
+    "eslint-plugin-astro": "^1.2.0",
+    "prettier": "^3.4.2",
+    "prettier-plugin-astro": "^0.14.1",
+    "typescript": "^5.7.2"
+  }
+}

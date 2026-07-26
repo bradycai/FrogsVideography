@@ -1,0 +1,19 @@
+---
+import { MARQUEE_ITEMS } from '../config/site';
+---
+
+<div class="marquee" aria-hidden="true">
+  <div class="track" id="marquee">
+    {
+      [0, 1].map(() => (
+        <span class="item">
+          {MARQUEE_ITEMS.map((item) => (
+            <Fragment>
+              {item} <span class="s">/</span>{' '}
+            </Fragment>
+          ))}
+        </span>
+      ))
+    }
+  </div>
+</div>

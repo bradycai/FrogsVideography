@@ -1,0 +1,65 @@
+---
+import { ROI } from '../config/site';
+---
+
+<section class="roi" id="calculator" aria-label="Estimate your ROI">
+  <div class="wrap">
+    <div class="reveal" style="max-width:680px">
+      <span class="eyebrow">{ROI.eyebrow}</span>
+      <h2 class="h-lg">{ROI.heading}</h2>
+      <p class="lead muted" style="margin-top:20px">{ROI.body}</p>
+    </div>
+    <div class="roi-grid">
+      <div class="roi-panel reveal d1">
+        <div class="field">
+          <label for="orgType">Organization type</label>
+          <select id="orgType">
+            <option value="business">Business / Brand</option>
+            <option value="nonprofit">Nonprofit</option>
+            <option value="event">Event / Experience</option>
+            <option value="startup">Startup</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="visitors">Monthly website visitors <span class="val" id="visitorsV">5,000</span></label>
+          <input type="range" id="visitors" min="500" max="100000" step="500" value="5000" />
+        </div>
+        <div class="field">
+          <label for="leads">Monthly leads or inquiries <span class="val" id="leadsV">50</span></label>
+          <input type="range" id="leads" min="5" max="2000" step="5" value="50" />
+        </div>
+        <div class="field">
+          <label for="audience">Social media audience <span class="val" id="audienceV">3,000</span></label>
+          <input type="range" id="audience" min="0" max="200000" step="1000" value="3000" />
+        </div>
+        <div class="field" id="goalWrap">
+          <label for="goal">Annual revenue goal <span class="val" id="goalV">$250,000</span></label>
+          <input type="range" id="goal" min="10000" max="5000000" step="10000" value="250000" />
+        </div>
+      </div>
+      <div class="roi-out reveal d2">
+        <div class="rlab">Estimated annual opportunity unlocked</div>
+        <div class="roi-result" id="roiBig">$0</div>
+        <div class="muted" style="font-size:13.5px" id="roiSummary">Powered by higher engagement &amp; trust.</div>
+        <div class="roi-metrics">
+          <div class="m"><span>Projected engagement lift</span><b><span class="green" id="mEngage">+0%</span></b></div>
+          <div class="m"><span>New conversion opportunities / yr</span><b id="mConv">0</b></div>
+          <div class="m"><span id="mGiveLabel">Added revenue potential / yr</span><b><span class="green" id="mGive">$0</span></b></div>
+          <div class="m"><span>Content lifespan</span><b id="mLife">3+ yrs</b></div>
+          <div class="m"><span>Added reach from shares</span><b><span class="green" id="mReach">0</span></b></div>
+        </div>
+        <p class="roi-disc">
+          Illustrative estimate based on typical lifts from authentic video storytelling. Your real results depend on
+          your story, audience, and goals — which is exactly what we’ll map out together.
+        </p>
+        <a
+          class="btn btn-primary"
+          style="width:100%;justify-content:center;margin-top:20px"
+          href={ROI.cta.href}
+          target="_blank"
+          rel="noopener">{ROI.cta.label} <span class="arrow">→</span></a
+        >
+      </div>
+    </div>
+  </div>
+</section>

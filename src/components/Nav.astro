@@ -1,0 +1,17 @@
+---
+import { BUSINESS, LINKS, NAV_LINKS } from '../config/site';
+---
+
+<header class="nav" id="nav">
+  <a href="#top" class="brand" aria-label={`${BUSINESS.name} home`}>
+    <img src="/images/logo.png" width="520" height="277" alt={`${BUSINESS.name} logo`} />
+    <span class="wm">{BUSINESS.name}</span>
+  </a>
+  <nav class="navlinks" aria-label="Primary">
+    {NAV_LINKS.map((l) => <a href={l.href}>{l.label}</a>)}
+  </nav>
+  <a class="nav-cta" href={LINKS.calendly} target="_blank" rel="noopener">Book Your Consultation</a>
+  <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</header>

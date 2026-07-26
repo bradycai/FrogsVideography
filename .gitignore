@@ -1,0 +1,27 @@
+# build output
+dist/
+.output/
+
+# dependencies
+node_modules/
+
+# astro
+.astro/
+
+# env & secrets — never commit
+.env
+.env.*
+!.env.example
+
+# logs
+*.log
+npm-debug.log*
+
+# os / editor
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# recovered snapshot of the old single-file site (kept locally as reference only)
+current-site.html

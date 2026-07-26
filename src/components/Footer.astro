@@ -1,0 +1,46 @@
+---
+import { BUSINESS, LINKS, FOOTER } from '../config/site';
+const year = 2026;
+const isExternal = (href: string) => href.startsWith('http');
+---
+
+<footer aria-label="Footer">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a href="#top" class="brand" aria-label={`${BUSINESS.name} home`}>
+        <img src="/images/logo.png" width="520" height="277" alt={`${BUSINESS.name} logo`} />
+      </a>
+      <p>{FOOTER.blurb}</p>
+      <a
+        class="btn btn-primary"
+        href={LINKS.calendly}
+        target="_blank"
+        rel="noopener"
+        style="font-size:13.5px;padding:12px 22px">Book Your Consultation <span class="arrow">→</span></a
+      >
+    </div>
+    {
+      FOOTER.columns.map((col) => (
+        <div>
+          <h4>{col.title}</h4>
+          {col.links.map((link) => {
+            const ext = isExternal(link.href);
+            return (
+              <a
+                href={link.href}
+                class:list={{ green: 'accent' in link && link.accent }}
+                target={ext ? '_blank' : undefined}
+                rel={ext ? 'noopener' : undefined}
+              >
+                {link.label}
+              </a>
+            );
+          })}
+        </div>
+      ))
+    }
+  </div>
+  <div class="foot-bottom">
+    <span>© {year} {BUSINESS.name} — Video Production Company, {BUSINESS.areaServed.join(' & ')}.</span>
+  </div>
+</footer>

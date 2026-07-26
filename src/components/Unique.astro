@@ -1,0 +1,24 @@
+---
+import { UNIQUE } from '../config/site';
+---
+
+<section aria-label="What makes us unique">
+  <div class="wrap">
+    <div class="reveal" style="max-width:680px">
+      <span class="eyebrow">{UNIQUE.eyebrow}</span>
+      <h2 class="h-lg">{UNIQUE.heading}</h2>
+      <p class="lead muted" style="margin-top:22px">{UNIQUE.body}</p>
+    </div>
+    <div class="diff-grid">
+      {
+        UNIQUE.cards.map((c, i) => (
+          <div class:list={['diff', 'reveal', `d${i + 1}`]}>
+            <div class="ic">{c.icon}</div>
+            <h3>{c.title}</h3>
+            <p>{c.body}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,11 @@
+---
+import { BUSINESS } from '../config/site';
+---
+
+<div id="loader" role="status" aria-label="Loading">
+  <div class="loader-mark" aria-hidden="true">
+    <img src="/images/logo.png" width="520" height="277" alt={`${BUSINESS.name} logo`} />
+  </div>
+  <div class="loader-bar" aria-hidden="true"><i></i></div>
+  <div class="loader-cap">{BUSINESS.name}</div>
+</div>

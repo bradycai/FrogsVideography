@@ -1,0 +1,16 @@
+---
+import { PORTFOLIO } from '../config/site';
+import VideoCard from './VideoCard.astro';
+---
+
+<section id="work" aria-label="Our portfolio">
+  <div class="wrap">
+    <div class="reveal" style="max-width:680px">
+      <span class="eyebrow">{PORTFOLIO.eyebrow}</span>
+      <h2 class="h-lg">{PORTFOLIO.heading}</h2>
+    </div>
+    <div class="film-grid">
+      {PORTFOLIO.items.map((v) => <VideoCard id={v.id} tag={v.tag} title={v.title} reveal />)}
+    </div>
+  </div>
+</section>

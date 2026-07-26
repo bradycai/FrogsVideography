@@ -1,0 +1,30 @@
+---
+import { PROCESS } from '../config/site';
+---
+
+<section id="process" aria-label="Our process">
+  <div class="wrap split" style="align-items:start">
+    <div class="reveal" style="position:sticky;top:100px">
+      <span class="eyebrow">{PROCESS.eyebrow}</span>
+      <h2 class="h-lg">{PROCESS.heading}</h2>
+      <p class="lead muted" style="margin-top:20px">{PROCESS.body}</p>
+      <a class="btn btn-primary" style="margin-top:28px" href={PROCESS.cta.href} target="_blank" rel="noopener">
+        {PROCESS.cta.label} <span class="arrow">→</span>
+      </a>
+    </div>
+    <div class="timeline reveal d1" id="timeline">
+      <div class="tl-fill" id="tlFill"></div>
+      {
+        PROCESS.steps.map((s) => (
+          <div class="step">
+            <div class="node">{s.n}</div>
+            <div class="c">
+              <h3>{s.title}</h3>
+              <p>{s.body}</p>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

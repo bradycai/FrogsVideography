@@ -1,0 +1,8 @@
+---
+import { LINKS, NAV_LINKS } from '../config/site';
+---
+
+<nav class="mobile-menu" id="mobileMenu" aria-label="Mobile">
+  {NAV_LINKS.map((l) => <a href={l.href}>{l.label}</a>)}
+  <a href={LINKS.calendly} target="_blank" rel="noopener" class="green">Book Consultation →</a>
+</nav>

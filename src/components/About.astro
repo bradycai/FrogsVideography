@@ -1,0 +1,28 @@
+---
+import { ABOUT } from '../config/site';
+---
+
+<section class="about" id="about" aria-label="About us">
+  <div class="wrap about-grid">
+    <div class="founders reveal">
+      {
+        ABOUT.portraits.map((p, i) => (
+          <div class="portrait" style={i === 1 ? 'margin-top:32px' : undefined}>
+            <img src={p.src} width="720" height="960" loading="lazy" alt={p.alt} />
+            <div class="badge">
+              <b>{p.name}</b>
+              <span>{p.role}</span>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+    <div class="reveal d1">
+      <span class="eyebrow">{ABOUT.eyebrow}</span>
+      <div class="about-body">
+        {ABOUT.paragraphs.map((p) => <p>{p}</p>)}
+      </div>
+      <span class="sig">{ABOUT.signature}</span>
+    </div>
+  </div>
+</section>

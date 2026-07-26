@@ -1,0 +1,26 @@
+---
+import { WHY } from '../config/site';
+---
+
+<section aria-label="Why intentional storytelling matters">
+  <div class="wrap split">
+    <div class="reveal">
+      <span class="eyebrow">{WHY.eyebrow}</span>
+      <div class="big-quote">{WHY.quoteLead} <em>{WHY.quoteAccent}</em></div>
+      <p class="lead muted" style="margin-top:24px">{WHY.body}</p>
+    </div>
+    <div class="why-list reveal d1">
+      {
+        WHY.rows.map((r) => (
+          <div class="row">
+            <div class="k">{r.k}</div>
+            <div class="v">
+              <b>{r.title}</b>
+              <p>{r.body}</p>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

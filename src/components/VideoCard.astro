@@ -1,0 +1,43 @@
+---
+/** Reusable YouTube video card (used by Portfolio + Reels). */
+import type { HTMLAttributes } from 'astro/types';
+import { BUSINESS } from '../config/site';
+
+interface Props {
+  id: string;
+  tag: string;
+  title: string;
+  reveal?: boolean;
+  role?: HTMLAttributes<'div'>['role'];
+}
+
+const { id, tag, title, reveal = false, role } = Astro.props;
+const alt = `${title} — ${tag.toLowerCase()} video by ${BUSINESS.name}`;
+---
+
+<div
+  class:list={['vcard', { reveal }]}
+  data-yt={id}
+  data-title={title}
+  role={role}
+  tabindex="0"
+  aria-label={`Play video: ${title}`}
+>
+  <div class="ratio">
+    <img
+      class="thumb"
+      loading="lazy"
+      width="480"
+      height="360"
+      src={`https://img.youtube.com/vi/${id}/hqdefault.jpg`}
+      alt={alt}
+    />
+    <div class="play">
+      <svg width="18" height="20" viewBox="0 0 22 24" aria-hidden="true"><path d="M0 0l22 12L0 24z"></path></svg>
+    </div>
+    <div class="meta">
+      <span class="tag">{tag}</span>
+      <h3>{title}</h3>
+    </div>
+  </div>
+</div>
