@@ -463,3 +463,19 @@ footer{border-top:1px solid var(--line);padding:64px var(--pad) 36px;background:
   .foot-grid{grid-template-columns:1fr;}
   .film-grid{grid-template-columns:1fr;}
 }
+
+@media (max-width: 760px) {
+  #process .split {
+    display: block;
+  }
+
+  #process .split > div:first-child {
+    position: static !important;
+    transform: none !important;
+    margin-bottom: 56px;
+  }
+
+  #process .timeline {
+    margin-top: 0;
+  }
+}
