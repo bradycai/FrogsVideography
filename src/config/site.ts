@@ -66,7 +66,7 @@ export const SITE = {
     'Documentary Filmmaker Massachusetts',
   ],
   /** Social share image. Swap for a branded 1200×630 card in /public/images. */
-  ogImage: 'https://img.youtube.com/vi/WffwKWtDlcw/maxresdefault.jpg',
+  ogImage: 'https://www.frogsvideography.com/images/logo.png',
   ogImageWidth: 1280,
   ogImageHeight: 720,
   themeColor: '#000000',
