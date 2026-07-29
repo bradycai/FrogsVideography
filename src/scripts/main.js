@@ -272,8 +272,37 @@
     if (O.life) O.life.textContent = '3+ yrs';
     if (O.reach) O.reach.textContent = '+' + fmtK(reachAdd);
   }
-  Object.keys(I).forEach(function (k) {
+    Object.keys(I).forEach(function (k) {
     if (I[k]) I[k].addEventListener('input', calc);
   });
+
   calc();
+
+  /* ---- Services accordion ---- */
+  var serviceItems = document.querySelectorAll('[data-svc]');
+
+  serviceItems.forEach(function (item) {
+    var button = item.querySelector('.svc-head');
+
+    if (!button) return;
+
+    button.addEventListener('click', function () {
+      var shouldOpen = !item.classList.contains('open');
+
+      serviceItems.forEach(function (otherItem) {
+        otherItem.classList.remove('open');
+
+        var otherButton = otherItem.querySelector('.svc-head');
+
+        if (otherButton) {
+          otherButton.setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      if (shouldOpen) {
+        item.classList.add('open');
+        button.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
 })();

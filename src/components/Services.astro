@@ -11,16 +11,37 @@ import { SERVICES } from '../config/site';
     </div>
     <div class="svc-list reveal d1">
       {
-        SERVICES.items.map((s, i) => (
-          <a class="svc" href={SERVICES.cta.href} target="_blank" rel="noopener">
-            <span class="idx">{String(i + 1).padStart(2, '0')}</span>
-            <div>
-              <h3>{s.title}</h3>
-              <p class="out">{s.body}</p>
+        SERVICES.items.map((s, i) => {
+          const idx = String(i + 1).padStart(2, '0');
+          const panelId = `svc-panel-${i}`;
+          const btnId = `svc-btn-${i}`;
+          return (
+            <div class="svc" data-svc>
+              <button class="svc-head" id={btnId} type="button" aria-expanded="false" aria-controls={panelId}>
+                <span class="idx">{idx}</span>
+                <span class="svc-title">
+                  <h3>{s.title}</h3>
+                  <span class="out">{s.body}</span>
+                </span>
+                <span class="go" aria-hidden="true">→</span>
+              </button>
+              <div class="svc-panel" id={panelId} role="region" aria-labelledby={btnId}>
+                <div class="svc-panel-inner">
+                  <div class="svc-block">
+                    <h4 class="svc-lbl">Overview</h4>
+                    <p class="svc-overview">{s.overview}</p>
+                  </div>
+                  <div class="svc-block">
+                    <h4 class="svc-lbl">Perfect For</h4>
+                    <ul class="svc-perfect">
+                      {s.perfectFor.map((item) => <li>{item}</li>)}
+                    </ul>
+                  </div>
+                </div>
+              </div>
             </div>
-            <span class="go" aria-hidden="true">→</span>
-          </a>
-        ))
+          );
+        })
       }
     </div>
     <div class="reveal d2" style="margin-top:44px">

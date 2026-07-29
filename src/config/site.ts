@@ -216,38 +216,112 @@ export const SERVICES = {
   headingAccent: 'outcomes.',
   body: 'Every engagement is built around what you actually need to happen — more giving, more trust, more customers, more attention.',
   cta: { label: 'Find the right video for your goal', href: LINKS.calendly },
+  // Each service expands into an accordion: `overview` (2–4 sentences on client
+  // value) + `perfectFor` (4–6 ideal use cases). Keep copy text-only.
   items: [
     {
       title: 'Mini Documentary Experience',
       body: 'Turn your mission into a story people feel. Perfect for the “About” film that finally makes visitors believe in what you do.',
+      overview:
+        'A mini documentary gives people a reason to care before you ever ask them for anything. We spend real time with the people at the heart of your work, then shape those honest moments into a short film that carries your mission the way a paragraph never could. It becomes the piece you point to when words aren’t enough — on your homepage, in a pitch, or the first time someone asks what you actually do.',
+      perfectFor: [
+        'Organizations with a strong “why” that’s hard to explain in text',
+        'Homepage and “About” films that build instant belief',
+        'Founders and teams telling their origin story',
+        'Nonprofits showing impact through the people they serve',
+        'Rebrands that need a new narrative anchor',
+      ],
     },
     {
       title: 'Fundraising Films',
       body: 'Donor-ready films engineered to move people to give — for galas, grant proposals, and year-end campaigns that need to raise more.',
+      overview:
+        'Giving is an emotional decision, and a fundraising film is built to earn that moment. We find the thread that connects a donor’s values to your work, then let real voices make the case so the ask feels earned rather than forced. The right film keeps working long after the lights come up — on your donation page, in follow-ups, and in every grant conversation that comes next.',
+      perfectFor: [
+        'Galas, banquets, and live giving moments',
+        'Year-end and giving-day campaigns',
+        'Grant proposals that need an emotional anchor',
+        'Capital campaigns and major-donor cultivation',
+        'Nonprofits refreshing a dated appeal video',
+      ],
     },
     {
       title: 'Corporate Storytelling',
       body: 'Show customers who you really are. Brand films and company stories that build authority and turn interest into trust.',
+      overview:
+        'People choose companies they trust, and trust starts with understanding who you really are. We translate your culture, your values, and the way you work into a film that feels like the real thing instead of a brochure. It’s the difference between a prospect skimming your website and a prospect deciding you’re the one they want to work with.',
+      perfectFor: [
+        'Companies whose reputation outpaces their online presence',
+        'Recruiting and culture films that attract the right people',
+        'B2B brands shortening long, relationship-driven sales cycles',
+        'Vision and leadership pieces for investors or partners',
+        'Businesses replacing a stale corporate video',
+      ],
     },
     {
       title: 'Commercial Campaigns',
       body: 'Cinematic ads and product launches that stop the scroll and sell — without ever feeling like a hard sell.',
+      overview:
+        'A great commercial earns attention instead of demanding it. We build each ad around a single clear idea, so the story does the persuading and the sell never feels like one. Whether it’s a launch or an always-on campaign, the goal is the same: something people actually want to watch, and remember afterward.',
+      perfectFor: [
+        'Product launches and new-location openings',
+        'Paid social, streaming, and pre-roll campaigns',
+        'Brands that want to feel premium, not promotional',
+        'Seasonal or limited-time promotions',
+        'Products that are easier to show than to explain',
+      ],
     },
     {
       title: 'Event Recap Films',
       body: 'Months of planning shouldn’t vanish in a day. Fast-turnaround recap & highlight films that keep your event working for you.',
+      overview:
+        'An event lives for a day; a recap film makes it work for a year. We capture the energy, the faces, and the moments that made it matter, then turn it around fast enough to ride the momentum while people still care. It becomes proof for sponsors, a magnet for next year’s attendees, and a highlight your team is proud to share.',
+      perfectFor: [
+        'Conferences, summits, and galas',
+        'Sponsor and stakeholder recap deliverables',
+        'Annual events working to grow attendance',
+        'Product launches and brand activations',
+        'Community and fundraising gatherings',
+      ],
     },
     {
       title: 'Drone Storytelling',
       body: 'Scale, scope, and awe from above. Aerial storytelling that gives your brand a cinematic sense of place.',
+      overview:
+        'Some stories only make sense from above. Aerial cinematography gives your project a sense of scale, place, and ambition that ground-level footage can’t reach. Used with intention, it isn’t a gimmick — it’s the shot that makes a viewer feel the size of what you’ve built.',
+      perfectFor: [
+        'Real estate, resorts, and hospitality',
+        'Construction, development, and large facilities',
+        'Destinations and location-driven brands',
+        'Manufacturing and industrial operations',
+        'Establishing shots that elevate a larger film',
+      ],
     },
     {
       title: 'Live Performance Films',
       body: 'Multi-cam music and live event films that capture the energy of the room and let it live forever online.',
+      overview:
+        'Live energy is impossible to fake and easy to lose. We cover performances with multiple cameras and a musician’s ear, so the finished film feels as electric as being in the room. It gives artists and venues something that keeps drawing people in long after the last note.',
+      perfectFor: [
+        'Musicians and bands building a reel',
+        'Concerts, festivals, and tours',
+        'Theaters, venues, and performing-arts groups',
+        'Worship and community performances',
+        'Comedy, dance, and live showcases',
+      ],
     },
     {
       title: 'Social Media Content',
       body: 'Scroll-stopping short-form videos that keep your brand consistent, current, and in front of the people who matter.',
+      overview:
+        'Staying top of mind takes consistency, and short-form video is how you get there. We produce content built for the way people actually watch — quick, native, and unmistakably yours — so your feed stops feeling like an afterthought. One shoot day can fuel weeks of posts that look intentional instead of improvised.',
+      perfectFor: [
+        'Brands that struggle to post consistently',
+        'Reels, Shorts, and TikTok-first content',
+        'Product teasers and behind-the-scenes series',
+        'Recurring content from a single shoot day',
+        'Repurposing longer films into short clips',
+      ],
     },
   ],
 } as const;
