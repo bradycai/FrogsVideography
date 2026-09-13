@@ -130,7 +130,7 @@ export const WHY = {
   eyebrow: 'Intentional storytelling matters',
   quoteLead: 'The most impactful stories',
   quoteAccent: 'inspire feelings.',
-  body: 'We showcase what your organization does, in your most authentic light, to amplify your message and achieve your goals.',
+  body: 'We showcase what your organization does, in your most authentic light, to amplify your message and help you achieve your goals.',
   rows: [
     {
       k: '22×',
@@ -140,12 +140,12 @@ export const WHY = {
     {
       k: '80%',
       title: 'More trust',
-      body: 'Audiences trust authentic, real-people storytelling far more than polished advertising.',
+      body: 'Audiences trust authentic, real people storytelling far more than polished advertising.',
     },
     {
       k: '∞',
       title: 'Lasting value',
-      body: 'One well-made video works for years across your online presence and in pitches.',
+      body: 'One well made video works for years across your online presence and in pitches.',
     },
   ],
 } as const;
@@ -214,14 +214,14 @@ export const SERVICES = {
   eyebrow: 'What we create',
   headingLead: 'We don’t sell videos. We deliver',
   headingAccent: 'outcomes.',
-  body: 'Every engagement is built around what you actually need to happen — more giving, more trust, more customers, more attention.',
+  body: 'Every engagement is built around what you actually need to happen. More giving, more trust, more customers, more attention.',
   cta: { label: 'Find the right video for your goal', href: LINKS.calendly },
   // Each service expands into an accordion: `overview` (2–4 sentences on client
   // value) + `perfectFor` (4–6 ideal use cases). Keep copy text-only.
   items: [
     {
       title: 'Mini Documentary Experience',
-      body: 'Turn your mission into a story people feel. Perfect for the “About” film that finally makes visitors believe in what you do.',
+      body: 'We work with your organization to tell your story. The perfect video to make your clients understand what your organization does.',
       overview:
         'A mini documentary gives people a reason to care before you ever ask them for anything. We spend real time with the people at the heart of your work, then shape those honest moments into a short film that carries your mission the way a paragraph never could. It becomes the piece you point to when words aren’t enough — on your homepage, in a pitch, or the first time someone asks what you actually do.',
       perfectFor: [
@@ -234,7 +234,7 @@ export const SERVICES = {
     },
     {
       title: 'Fundraising Films',
-      body: 'Donor-ready films engineered to move people to give — for galas, grant proposals, and year-end campaigns that need to raise more.',
+      body: 'We work with your nonprofit to showcase what your mission is, and turn it into an asset for your Galas, Grant Proposals, website and social media.',
       overview:
         'Giving is an emotional decision, and a fundraising film is built to earn that moment. We find the thread that connects a donor’s values to your work, then let real voices make the case so the ask feels earned rather than forced. The right film keeps working long after the lights come up — on your donation page, in follow-ups, and in every grant conversation that comes next.',
       perfectFor: [
@@ -259,8 +259,8 @@ export const SERVICES = {
       ],
     },
     {
-      title: 'Commercial Campaigns',
-      body: 'Cinematic ads and product launches that stop the scroll and sell — without ever feeling like a hard sell.',
+      title: 'Commercials',
+      body: '30 second to one minute commercials designed to promote a specific product or your organization overall.',
       overview:
         'A great commercial earns attention instead of demanding it. We build each ad around a single clear idea, so the story does the persuading and the sell never feels like one. Whether it’s a launch or an always-on campaign, the goal is the same: something people actually want to watch, and remember afterward.',
       perfectFor: [
@@ -273,7 +273,7 @@ export const SERVICES = {
     },
     {
       title: 'Event Recap Films',
-      body: 'Months of planning shouldn’t vanish in a day. Fast-turnaround recap & highlight films that keep your event working for you.',
+      body: 'We highlight your event and turn it into an asset you can use to post as a thank you afterwards and use to promote your next event.',
       overview:
         'An event lives for a day; a recap film makes it work for a year. We capture the energy, the faces, and the moments that made it matter, then turn it around fast enough to ride the momentum while people still care. It becomes proof for sponsors, a magnet for next year’s attendees, and a highlight your team is proud to share.',
       perfectFor: [
@@ -286,7 +286,7 @@ export const SERVICES = {
     },
     {
       title: 'Drone Storytelling',
-      body: 'Scale, scope, and awe from above. Aerial storytelling that gives your brand a cinematic sense of place.',
+      body: 'We use our drone to help showcase your location. Whether you need beauty shots, inspection photos or something altogether different, we are FAA Part 107 Licensed drone pilots.',
       overview:
         'Some stories only make sense from above. Aerial cinematography gives your project a sense of scale, place, and ambition that ground-level footage can’t reach. Used with intention, it isn’t a gimmick — it’s the shot that makes a viewer feel the size of what you’ve built.',
       perfectFor: [
@@ -299,7 +299,7 @@ export const SERVICES = {
     },
     {
       title: 'Live Performance Films',
-      body: 'Multi-cam music and live event films that capture the energy of the room and let it live forever online.',
+      body: 'We create concert movies of your set to preserve your performance and share it with the world.',
       overview:
         'Live energy is impossible to fake and easy to lose. We cover performances with multiple cameras and a musician’s ear, so the finished film feels as electric as being in the room. It gives artists and venues something that keeps drawing people in long after the last note.',
       perfectFor: [
@@ -312,7 +312,7 @@ export const SERVICES = {
     },
     {
       title: 'Social Media Content',
-      body: 'Scroll-stopping short-form videos that keep your brand consistent, current, and in front of the people who matter.',
+      body: 'Short form videos that help you achieve your goals through social media platforms.',
       overview:
         'Staying top of mind takes consistency, and short-form video is how you get there. We produce content built for the way people actually watch — quick, native, and unmistakably yours — so your feed stops feeling like an afterthought. One shoot day can fuel weeks of posts that look intentional instead of improvised.',
       perfectFor: [
@@ -392,7 +392,7 @@ export const ROI = {
 export const CONTACT = {
   eyebrow: 'Get in touch',
   heading: 'Let’s tell your story.',
-  body: 'Tell us a little about your organization and what you’re hoping to create. We’ll get back to you within a couple of business days — or book a consultation and skip the wait.',
+  body: 'Tell us a bit about your organization and what you’re trying to create. We look forward to meeting you!',
   primaryCta: { label: 'Book Your Consultation', href: LINKS.calendly },
 } as const;
 
