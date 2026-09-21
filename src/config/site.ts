@@ -128,8 +128,8 @@ export const TRUST = {
 /* ------------------------- Why storytelling ------------------------------ */
 export const WHY = {
   eyebrow: 'Intentional storytelling matters',
-  quoteLead: 'The most impactful stories',
-  quoteAccent: 'inspire feelings.',
+  quoteLead: 'Our videos help you',
+  quoteAccent: 'achieve your goals.',
   body: 'We showcase what your organization does, in your most authentic light, to amplify your message and help you achieve your goals.',
   rows: [
     {
@@ -153,8 +153,8 @@ export const WHY = {
 /* ------------------------- What makes us unique -------------------------- */
 export const UNIQUE = {
   eyebrow: 'What makes us unique',
-  heading: 'Real moments, no rehearsal needed.',
-  body: 'No script needed. Through conversational interviews with real people from your organization we capture the authentic soundbites to tell emotional stories.',
+  heading: 'We showcase your organization authentically and genuinely.',
+  body: 'Through conversational interviews with real people from your organization we capture the authentic soundbites to tell emotional stories.',
   cards: [
     {
       icon: '◈',
