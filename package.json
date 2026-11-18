@@ -10,13 +10,18 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro check && astro build",
-    "preview": "astro preview",
+    "preview": "vite preview --outDir dist --port 4321",
     "check": "astro check",
     "lint": "eslint . --ext .js,.ts,.astro",
-    "format": "prettier --write \"**/*.{astro,ts,js,css,md,json}\""
+    "format": "prettier --write \"**/*.{astro,ts,js,css,md,json}\"",
+    "db:setup": "node scripts/db-setup.mjs",
+    "secrets:key": "node scripts/secrets.mjs key",
+    "secrets:password": "node scripts/secrets.mjs password"
   },
   "dependencies": {
-    "astro": "^5.0.0"
+    "@astrojs/netlify": "6.6.5",
+    "astro": "^5.7.0",
+    "postgres": "3.4.9"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",

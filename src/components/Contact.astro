@@ -26,16 +26,15 @@ const telHref = phone ? 'tel:' + phone.replace(/[^+\d]/g, '') : '';
       </div>
     </div>
 
-    <!--
-      CONTACT FORM — front-end only (no backend connected yet).
-      To make submissions deliver, connect ONE of:
-        • Formspree   → set <form action="https://formspree.io/f/XXXX" method="POST">
-        • Netlify Forms → add `netlify` attribute (only works on Netlify hosting)
-        • EdgeOne Pages Function / Web3Forms / Basin → set the action URL
-      Until then, the script in src/scripts/contact.js falls back to a mailto:
-      draft when BUSINESS.email is set, or points visitors to Calendly.
-      See README.md → "Contact form".
-    -->
+    {/*
+      CONTACT FORM — src/scripts/contact.js handles submit:
+        1. Saves the inquiry (encrypted) to Postgres via POST /api/contact,
+           viewable at /admin. This runs in the background.
+        2. Then, as before, opens a pre-filled mailto: draft when BUSINESS.email
+           is set, or points visitors to Calendly.
+      See README.md → "Contact form & backend".
+      (JSX-style comments like this one are not shipped in the page's HTML.)
+    */}
     <form
       class="contact-form reveal d1"
       id="contactForm"
@@ -68,6 +67,11 @@ const telHref = phone ? 'tel:' + phone.replace(/[^+\d]/g, '') : '';
       <div class="cf-field">
         <label for="cfMsg">Tell us about your project</label>
         <textarea id="cfMsg" name="message" rows="4" required></textarea>
+      </div>
+      {/* Spam trap: hidden from people and screen readers; bots that fill it are ignored. */}
+      <div aria-hidden="true" style="position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden">
+        <label for="cfWebsite">Website</label>
+        <input id="cfWebsite" name="website" type="text" tabindex="-1" autocomplete="off" />
       </div>
       <button class="btn btn-primary" type="submit">Send message <span class="arrow">→</span></button>
       <p class="cf-status" id="cfStatus" role="status" aria-live="polite"></p>

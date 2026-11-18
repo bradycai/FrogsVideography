@@ -1,0 +1,326 @@
+---
+/* ============================================================================
+ *  /admin — password-protected inbox for contact-form inquiries.
+ *  Rendered on the server for every request (Netlify Function), never cached,
+ *  never indexed. Data is decrypted here and only here.
+ * ========================================================================== */
+import {
+  SESSION_SECONDS,
+  adminConfigured,
+  createSessionToken,
+  verifyAdminPassword,
+  verifySessionToken,
+} from '../lib/crypto';
+import { listInquiries, type Inquiry } from '../lib/inquiries';
+
+export const prerender = false;
+
+const COOKIE = 'frogs_admin';
+const cookieOptions = {
+  path: '/admin',
+  httpOnly: true,
+  secure: import.meta.env.PROD,
+  sameSite: 'strict',
+  maxAge: SESSION_SECONDS,
+} as const;
+
+Astro.response.headers.set('Cache-Control', 'no-store');
+Astro.response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+
+const configured = adminConfigured();
+let loginError = '';
+
+// Only accept form posts from this site. (Astro's built-in checkOrigin only
+// covers fully server-rendered sites, so check explicitly.) Browsers always
+// send Origin on POST; non-browser clients can't carry a victim's cookie anyway.
+const origin = Astro.request.headers.get('origin');
+if (Astro.request.method === 'POST' && origin && origin !== Astro.url.origin) {
+  return new Response('Cross-site form submissions are not allowed.', { status: 403 });
+}
+
+if (Astro.request.method === 'POST' && configured) {
+  const form = await Astro.request.formData();
+  if (form.get('intent') === 'logout') {
+    Astro.cookies.delete(COOKIE, { path: '/admin' });
+    return Astro.redirect('/admin', 303);
+  }
+  if (await verifyAdminPassword(String(form.get('password') ?? ''))) {
+    Astro.cookies.set(COOKIE, createSessionToken(), cookieOptions);
+    return Astro.redirect('/admin', 303);
+  }
+  loginError = 'That password is incorrect.';
+  Astro.response.status = 401;
+}
+
+const signedIn = configured && verifySessionToken(Astro.cookies.get(COOKIE)?.value);
+
+let inquiries: Inquiry[] = [];
+let loadError = '';
+if (signedIn) {
+  try {
+    inquiries = await listInquiries();
+  } catch (err) {
+    console.error('[admin] could not load inquiries:', err);
+    loadError = 'Could not load inquiries. Check the database connection and DATA_ENCRYPTION_KEY.';
+  }
+}
+
+const dateFormat = new Intl.DateTimeFormat('en-US', {
+  dateStyle: 'medium',
+  timeStyle: 'short',
+  timeZone: 'America/New_York',
+});
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Inquiries · Frogs Videography</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <p class="eyebrow">Frogs Videography</p>
+          <h1>Inquiries</h1>
+        </div>
+        {
+          signedIn && (
+            <form method="post">
+              <input type="hidden" name="intent" value="logout" />
+              <button class="ghost" type="submit">
+                Sign out
+              </button>
+            </form>
+          )
+        }
+      </header>
+
+      {
+        !configured && (
+          <section class="panel">
+            <h2>Admin isn’t set up yet</h2>
+            <p class="muted">
+              Set <code>ADMIN_PASSWORD_HASH</code> and <code>DATA_ENCRYPTION_KEY</code> in the
+              site’s environment variables. See README.md → “Contact form &amp; backend”.
+            </p>
+          </section>
+        )
+      }
+
+      {
+        configured && !signedIn && (
+          <form class="panel login" method="post">
+            <label for="password">Password</label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              required
+              autofocus
+            />
+            {loginError && (
+              <p class="error" role="alert">
+                {loginError}
+              </p>
+            )}
+            <button type="submit">Sign in</button>
+          </form>
+        )
+      }
+
+      {
+        signedIn && (
+          <>
+            {loadError && (
+              <p class="panel error" role="alert">
+                {loadError}
+              </p>
+            )}
+            {!loadError && (
+              <p class="muted count">
+                {inquiries.length === 0
+                  ? 'No inquiries yet. Submissions from the contact form will appear here.'
+                  : `${inquiries.length} ${inquiries.length === 1 ? 'inquiry' : 'inquiries'}, newest first.`}
+              </p>
+            )}
+            <ol class="list">
+              {inquiries.map((q) => (
+                <li class="panel inquiry">
+                  <div class="meta">
+                    <time datetime={q.createdAt.toISOString()}>
+                      {dateFormat.format(q.createdAt)}
+                    </time>
+                    {q.projectType && <span class="tag">{q.projectType}</span>}
+                    {q.senderTotal > 1 && (
+                      <span class="tag subtle">{q.senderTotal} messages from this sender</span>
+                    )}
+                  </div>
+                  <h2>{q.name}</h2>
+                  <p class="contact">
+                    <a href={`mailto:${q.email}`}>{q.email}</a>
+                    {q.organization && <span class="muted"> · {q.organization}</span>}
+                  </p>
+                  <p class="message">{q.message}</p>
+                </li>
+              ))}
+            </ol>
+          </>
+        )
+      }
+    </main>
+  </body>
+</html>
+
+<style>
+  :global(html) {
+    color-scheme: dark;
+  }
+  :global(body) {
+    margin: 0;
+    background: #000;
+    color: #fff;
+    font-family:
+      'Inter',
+      system-ui,
+      -apple-system,
+      'Segoe UI',
+      sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  main {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 48px 16px 80px;
+  }
+  header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  h1 {
+    margin: 4px 0 0;
+    font-size: 32px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  h2 {
+    margin: 0 0 4px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .eyebrow {
+    margin: 0;
+    color: #39ff14;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .muted {
+    color: #8f8f8f;
+  }
+  .panel {
+    background: #0c0c0c;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 14px;
+    padding: 22px;
+  }
+  .login {
+    display: grid;
+    gap: 10px;
+    max-width: 360px;
+  }
+  label {
+    font-size: 13px;
+    color: #c9c9c9;
+  }
+  input {
+    background: #000;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 10px;
+    color: #fff;
+    font: inherit;
+    padding: 12px 14px;
+  }
+  input:focus-visible,
+  button:focus-visible,
+  a:focus-visible {
+    outline: 2px solid #39ff14;
+    outline-offset: 2px;
+  }
+  button {
+    background: #39ff14;
+    color: #000;
+    border: 0;
+    border-radius: 999px;
+    font: inherit;
+    font-weight: 600;
+    padding: 11px 20px;
+    cursor: pointer;
+  }
+  button.ghost {
+    background: transparent;
+    color: #c9c9c9;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+  }
+  .error {
+    color: #ff8a80;
+    margin: 0;
+  }
+  .count {
+    margin: 0 0 14px;
+  }
+  .list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 14px;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    color: #8f8f8f;
+    font-size: 13px;
+  }
+  .tag {
+    background: rgba(57, 255, 20, 0.09);
+    color: #39ff14;
+    border-radius: 999px;
+    padding: 2px 10px;
+    font-size: 12px;
+  }
+  .tag.subtle {
+    background: rgba(255, 255, 255, 0.06);
+    color: #c9c9c9;
+  }
+  .contact {
+    margin: 0 0 12px;
+    overflow-wrap: anywhere;
+  }
+  .contact a {
+    color: #39ff14;
+  }
+  .message {
+    margin: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    color: #e6e6e6;
+  }
+  code {
+    font-size: 13px;
+    color: #c9c9c9;
+  }
+</style>

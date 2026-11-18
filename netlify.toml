@@ -1,0 +1,6 @@
+# Netlify build settings. The @astrojs/netlify adapter generates the server
+# function for /api/contact and /admin automatically; every other page is
+# static HTML served from the CDN. Node version comes from .nvmrc.
+[build]
+  command = "npm run build"
+  publish = "dist"

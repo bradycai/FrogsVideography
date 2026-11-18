@@ -1,7 +1,7 @@
 name: CI
 
 # Build-checks every push and pull request so broken code never reaches
-# production. Actual deployment is handled by EdgeOne Pages' Git integration
+# production. Actual deployment is handled by the host's Git integration
 # (see DEPLOYMENT.md) — this workflow only verifies the build is healthy.
 
 on:
