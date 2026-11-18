@@ -36,7 +36,7 @@
       }).catch(function () {
         /* offline / backend unavailable — the visible flow below still works */
       });
-    } catch (err) {
+    } catch {
       /* very old browser — ignore */
     }
   }

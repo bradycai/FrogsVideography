@@ -21,7 +21,7 @@ npm run build    # type-check + produce static site in ./dist
 npm run preview  # serve the built ./dist locally to sanity-check
 ```
 
-Requires **Node 18.14+** (Node 20 recommended — see `.nvmrc`).
+Requires **Node 22.23.4+** (Node 24 recommended — see `.nvmrc`).
 
 ### All scripts
 
@@ -29,9 +29,9 @@ Requires **Node 18.14+** (Node 20 recommended — see `.nvmrc`).
 | ---------------- | ------------------------------------------------------- |
 | `npm run dev`    | Dev server with hot reload                              |
 | `npm run build`  | `astro check` (type-check) **then** build to `./dist`   |
-| `npm run preview`| Preview the production build locally                    |
+| `npm run preview`| Serve the built `./dist` locally (static pages; uses `vite preview`, since the Netlify adapter doesn't support `astro preview`) |
 | `npm run check`  | Type-check only                                         |
-| `npm run lint`   | ESLint over `.js` / `.ts` / `.astro`                    |
+| `npm run lint`   | ESLint over `.js` / `.mjs` / `.ts` / `.astro` (`eslint.config.js`) |
 | `npm run format` | Prettier auto-format                                    |
 | `npm run db:setup` | Create/update the `inquiries` table in Postgres (safe to re-run) |
 | `npm run secrets:key` | Generate `DATA_ENCRYPTION_KEY` (**once**; keep a copy)   |
@@ -202,10 +202,6 @@ createdb frogs_inquiries      #   any local Postgres works; set DATABASE_URL to 
 npm run db:setup              # creates the inquiries table
 npm run dev                   # form → saved; inquiries at http://localhost:4321/admin
 ```
-
-`npm run dev` prints a warning that no adapter is installed. That's expected:
-Astro's dev server runs the backend locally, and the Netlify adapter is only used
-for builds (see the comment in `astro.config.mjs`).
 
 **To change the admin password:** run `npm run secrets:password` and replace
 `ADMIN_PASSWORD_HASH` in Netlify. Everyone signed in is signed out.
