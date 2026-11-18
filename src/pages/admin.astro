@@ -30,9 +30,10 @@ Astro.response.headers.set('X-Robots-Tag', 'noindex, nofollow');
 const configured = adminConfigured();
 let loginError = '';
 
-// Only accept form posts from this site. (Astro's built-in checkOrigin only
-// covers fully server-rendered sites, so check explicitly.) Browsers always
-// send Origin on POST; non-browser clients can't carry a victim's cookie anyway.
+// Only accept form posts from this site. Astro's built-in checkOrigin covers
+// production builds but not `astro dev` for a mostly static site like this one,
+// so check explicitly and behave the same everywhere. Browsers always send
+// Origin on POST; non-browser clients can't carry a victim's cookie anyway.
 const origin = Astro.request.headers.get('origin');
 if (Astro.request.method === 'POST' && origin && origin !== Astro.url.origin) {
   return new Response('Cross-site form submissions are not allowed.', { status: 403 });
@@ -88,91 +89,81 @@ const dateFormat = new Intl.DateTimeFormat('en-US', {
           <p class="eyebrow">Frogs Videography</p>
           <h1>Inquiries</h1>
         </div>
-        {
-          signedIn && (
-            <form method="post">
-              <input type="hidden" name="intent" value="logout" />
-              <button class="ghost" type="submit">
-                Sign out
-              </button>
-            </form>
-          )
-        }
+        {signedIn && (
+          <form method="post">
+            <input type="hidden" name="intent" value="logout" />
+            <button class="ghost" type="submit">
+              Sign out
+            </button>
+          </form>
+        )}
       </header>
 
-      {
-        !configured && (
-          <section class="panel">
-            <h2>Admin isn’t set up yet</h2>
-            <p class="muted">
-              Set <code>ADMIN_PASSWORD_HASH</code> and <code>DATA_ENCRYPTION_KEY</code> in the
-              site’s environment variables. See README.md → “Contact form &amp; backend”.
+      {!configured && (
+        <section class="panel">
+          <h2>Admin isn’t set up yet</h2>
+          <p class="muted">
+            Set <code>ADMIN_PASSWORD_HASH</code> and <code>DATA_ENCRYPTION_KEY</code> in the site’s
+            environment variables. See README.md → “Contact form &amp; backend”.
+          </p>
+        </section>
+      )}
+
+      {configured && !signedIn && (
+        <form class="panel login" method="post">
+          <label for="password">Password</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            required
+            autofocus
+          />
+          {loginError && (
+            <p class="error" role="alert">
+              {loginError}
             </p>
-          </section>
-        )
-      }
+          )}
+          <button type="submit">Sign in</button>
+        </form>
+      )}
 
-      {
-        configured && !signedIn && (
-          <form class="panel login" method="post">
-            <label for="password">Password</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autocomplete="current-password"
-              required
-              autofocus
-            />
-            {loginError && (
-              <p class="error" role="alert">
-                {loginError}
-              </p>
-            )}
-            <button type="submit">Sign in</button>
-          </form>
-        )
-      }
-
-      {
-        signedIn && (
-          <>
-            {loadError && (
-              <p class="panel error" role="alert">
-                {loadError}
-              </p>
-            )}
-            {!loadError && (
-              <p class="muted count">
-                {inquiries.length === 0
-                  ? 'No inquiries yet. Submissions from the contact form will appear here.'
-                  : `${inquiries.length} ${inquiries.length === 1 ? 'inquiry' : 'inquiries'}, newest first.`}
-              </p>
-            )}
-            <ol class="list">
-              {inquiries.map((q) => (
-                <li class="panel inquiry">
-                  <div class="meta">
-                    <time datetime={q.createdAt.toISOString()}>
-                      {dateFormat.format(q.createdAt)}
-                    </time>
-                    {q.projectType && <span class="tag">{q.projectType}</span>}
-                    {q.senderTotal > 1 && (
-                      <span class="tag subtle">{q.senderTotal} messages from this sender</span>
-                    )}
-                  </div>
-                  <h2>{q.name}</h2>
-                  <p class="contact">
-                    <a href={`mailto:${q.email}`}>{q.email}</a>
-                    {q.organization && <span class="muted"> · {q.organization}</span>}
-                  </p>
-                  <p class="message">{q.message}</p>
-                </li>
-              ))}
-            </ol>
-          </>
-        )
-      }
+      {signedIn && (
+        <>
+          {loadError && (
+            <p class="panel error" role="alert">
+              {loadError}
+            </p>
+          )}
+          {!loadError && (
+            <p class="muted count">
+              {inquiries.length === 0
+                ? 'No inquiries yet. Submissions from the contact form will appear here.'
+                : `${inquiries.length} ${inquiries.length === 1 ? 'inquiry' : 'inquiries'}, newest first.`}
+            </p>
+          )}
+          <ol class="list">
+            {inquiries.map((q) => (
+              <li class="panel inquiry">
+                <div class="meta">
+                  <time datetime={q.createdAt.toISOString()}>{dateFormat.format(q.createdAt)}</time>
+                  {q.projectType && <span class="tag">{q.projectType}</span>}
+                  {q.senderTotal > 1 && (
+                    <span class="tag subtle">{q.senderTotal} messages from this sender</span>
+                  )}
+                </div>
+                <h2>{q.name}</h2>
+                <p class="contact">
+                  <a href={`mailto:${q.email}`}>{q.email}</a>
+                  {q.organization && <span class="muted"> · {q.organization}</span>}
+                </p>
+                <p class="message">{q.message}</p>
+              </li>
+            ))}
+          </ol>
+        </>
+      )}
     </main>
   </body>
 </html>

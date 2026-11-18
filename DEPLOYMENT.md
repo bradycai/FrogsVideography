@@ -23,14 +23,14 @@ a host that runs server code. That host is **Netlify**: see
 | Install command    | `npm install`   |
 | Build command      | `npm run build` |
 | Output directory   | `dist`          |
-| Node version       | 20 (see `.nvmrc`) |
+| Node version       | 24 (see `.nvmrc`) |
 
 ---
 
 ## Netlify setup (backend)
 
 Netlify reads `netlify.toml` (build command `npm run build`, publish `dist`) and
-`.nvmrc` (Node 20). The Astro Netlify adapter turns `/api/contact` and `/admin`
+`.nvmrc` (Node 24). The Astro Netlify adapter turns `/api/contact` and `/admin`
 into a Netlify Function automatically. There's nothing else to configure.
 
 1. **Create the site.** Netlify → *Add new site* → *Import an existing project*
