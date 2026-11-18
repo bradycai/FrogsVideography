@@ -1,9 +1,11 @@
 # Frogs Videography — Website
 
 Marketing site for **Frogs Videography**, a Massachusetts & Rhode Island video
-production company. Built with [Astro](https://astro.build) as a **static site**
-(plain HTML/CSS/JS output) so it stays fast, cheap to host, and easy to deploy to
-EdgeOne (or any static host).
+production company. Built with [Astro](https://astro.build). Every page is
+pre-rendered to **static HTML/CSS/JS**, so it stays fast and cheap to host. The
+only server code is a small **contact-form backend**: inquiries are encrypted and
+stored in Postgres, and owners read them at `/admin`. It runs as a Netlify
+Function (see [Contact form & backend](#contact-form--backend)).
 
 Live preview: https://frogsvideo.edgeone.dev
 Target production domain: https://www.frogsvideography.com _(not yet pointed — see [DEPLOYMENT.md](./DEPLOYMENT.md))_
@@ -31,6 +33,9 @@ Requires **Node 18.14+** (Node 20 recommended — see `.nvmrc`).
 | `npm run check`  | Type-check only                                         |
 | `npm run lint`   | ESLint over `.js` / `.ts` / `.astro`                    |
 | `npm run format` | Prettier auto-format                                    |
+| `npm run db:setup` | Create/update the `inquiries` table in Postgres (safe to re-run) |
+| `npm run secrets:key` | Generate `DATA_ENCRYPTION_KEY` (**once**; keep a copy)   |
+| `npm run secrets:password` | Hash a new `/admin` password → `ADMIN_PASSWORD_HASH` |
 
 ---
 
@@ -52,12 +57,22 @@ FrogsWebsite/
 │  ├─ components/          # one file per section (Hero, Services, Portfolio…)
 │  ├─ scripts/
 │  │  ├─ main.js           # loader, animations, video embeds, ROI calculator
-│  │  └─ contact.js        # contact-form handling (see “Contact form” below)
+│  │  └─ contact.js        # contact-form handling (see “Contact form & backend”)
+│  ├─ lib/                 # server-only backend code
+│  │  ├─ crypto.ts         # field encryption, keyed hashes, admin password + sessions
+│  │  ├─ db.ts             # Postgres connection
+│  │  └─ inquiries.ts      # validate / save / list inquiries
 │  ├─ styles/
 │  │  └─ global.css        # the full design system / all styling
 │  └─ pages/
-│     └─ index.astro       # assembles the homepage from the sections above
-├─ astro.config.mjs        # Astro + sitemap config (reads the production URL)
+│     ├─ index.astro       # assembles the homepage from the sections above
+│     ├─ api/contact.ts    # POST /api/contact — stores an inquiry (server route)
+│     └─ admin.astro       # /admin — password-protected inquiry inbox (server route)
+├─ db/schema.sql           # the inquiries table
+├─ scripts/                # db-setup.mjs, secrets.mjs (see “All scripts”)
+├─ .env.example            # the backend's environment variables
+├─ netlify.toml            # Netlify build settings
+├─ astro.config.mjs        # Astro + Netlify adapter + sitemap + env-var schema
 └─ DEPLOYMENT.md           # how to deploy & connect the custom domain
 ```
 
@@ -129,22 +144,75 @@ Setting one to `false` removes it from the page **without deleting any code**.
 
 ---
 
-## Contact form
+## Contact form & backend
 
-The contact form UI is complete, but **no backend/email service is connected yet.**
-Until one is, `src/scripts/contact.js` degrades gracefully:
+When a visitor submits the contact form, `src/scripts/contact.js`:
 
-- If `BUSINESS.email` is set → the form opens a pre-filled email draft (`mailto:`).
-- Otherwise → it points visitors to the Calendly booking link.
+1. **Saves the inquiry** in the background: `POST /api/contact` encrypts it and
+   stores it in Postgres.
+2. **Then does exactly what it always did.** If `BUSINESS.email` is set, it opens
+   a pre-filled email draft (`mailto:`). Otherwise it points visitors to the
+   Calendly booking link.
 
-**To make submissions deliver to an inbox,** pick one service and set the form’s
-`action` in `src/components/Contact.astro` (a comment there lists the options):
+Step 1 never blocks or changes step 2. If the backend is down or not configured,
+or the site is served from a static-only host such as the EdgeOne preview,
+visitors see no difference. The submission just isn't stored.
 
-- **Formspree** – `<form action="https://formspree.io/f/XXXX" method="POST">`
-- **Web3Forms / Basin** – similar single-URL POST endpoint
-- **EdgeOne Pages Function** – host a small serverless handler
+Owners read inquiries at **`/admin`** (password-protected, newest first, with a
+note when the same person has written more than once).
 
-No API keys are committed anywhere; add them only in the chosen service’s dashboard.
+### What's stored, and how it's kept private
+
+| Data | Stored as |
+| ---- | --------- |
+| Name, email, organization, message | **Encrypted** (AES-256-GCM) before it reaches the database |
+| Project type, timestamp | Plain text (fixed options; used for sorting) |
+| Email, visitor IP | **Keyed hash only** (HMAC-SHA256), used to spot repeat senders and rate-limit spam. The IP is never stored readably |
+| Admin password | Never stored. Only a scrypt hash, in an environment variable |
+
+Someone with a copy of the database or a backup sees only ciphertext. Decryption
+happens only on `/admin`, using `DATA_ENCRYPTION_KEY`, which lives in Netlify's
+environment variables and never in the database or the repo.
+
+Spam protection: a hidden "honeypot" field, server-side validation that mirrors
+the form's rules, and a limit of 5 submissions per IP per hour.
+
+> ⚠️ **Back up `DATA_ENCRYPTION_KEY`** (e.g. in a password manager). If it's lost
+> or replaced, inquiries already stored can never be decrypted.
+
+### Environment variables
+
+| Variable | Where it comes from |
+| -------- | ------------------- |
+| `DATABASE_URL` | Your Postgres provider (e.g. [Neon](https://neon.tech), free tier). If you use Netlify DB instead, it sets `NETLIFY_DATABASE_URL` automatically and that works too |
+| `DATA_ENCRYPTION_KEY` | `npm run secrets:key`, generated **once** |
+| `ADMIN_PASSWORD_HASH` | `npm run secrets:password` (prompts for the password and prints its hash) |
+
+All three are server-only secrets (declared in `astro.config.mjs` → `env.schema`)
+and are never sent to the browser. See [DEPLOYMENT.md](./DEPLOYMENT.md#netlify-setup-backend)
+for production setup.
+
+### Running the backend locally
+
+```bash
+cp .env.example .env          # then fill in the three values:
+npm run -s secrets:key        #   → paste DATA_ENCRYPTION_KEY=… into .env
+npm run -s secrets:password   #   → paste ADMIN_PASSWORD_HASH=… into .env
+createdb frogs_inquiries      #   any local Postgres works; set DATABASE_URL to match
+npm run db:setup              # creates the inquiries table
+npm run dev                   # form → saved; inquiries at http://localhost:4321/admin
+```
+
+`npm run dev` prints a warning that no adapter is installed. That's expected:
+Astro's dev server runs the backend locally, and the Netlify adapter is only used
+for builds (see the comment in `astro.config.mjs`).
+
+**To change the admin password:** run `npm run secrets:password` and replace
+`ADMIN_PASSWORD_HASH` in Netlify. Everyone signed in is signed out.
+
+**Retention:** there's no automatic deletion. Agree with the business how long
+to keep inquiries, and mention the form's data storage in the site's privacy
+policy.
 
 ---
 
@@ -152,8 +220,10 @@ No API keys are committed anywhere; add them only in the chosen service’s dash
 
 1. `npm run dev` and check your change in the browser (resize to test mobile).
 2. `npm run build` — must finish with **0 errors** (it runs type-checking too).
-3. Commit to Git and push. If GitHub → EdgeOne auto-deploy is set up, the site
-   redeploys automatically. Otherwise upload `./dist` (see **[DEPLOYMENT.md](./DEPLOYMENT.md)**).
+3. Commit to Git and push. If GitHub → Netlify (or EdgeOne) auto-deploy is set
+   up, the site redeploys automatically (see **[DEPLOYMENT.md](./DEPLOYMENT.md)**).
+   Only Netlify runs the contact-form backend; a static-only host serves the
+   pages, but submissions aren't stored there.
 
 > ⚠️ Do **not** commit secrets or `.env` files (already git-ignored). Do **not**
 > change production DNS/email records as part of a normal content update.

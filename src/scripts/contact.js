@@ -1,11 +1,16 @@
 /* ============================================================================
- *  Contact form handler — front-end only (no backend connected yet).
+ *  Contact form handler.
  *
- *  When a real endpoint is configured (see Contact.astro comment + README),
- *  give the <form> an `action` + `method="POST"` and this handler steps aside.
- *  Until then it degrades gracefully:
- *    • if a business email is set → opens a pre-filled mailto: draft
- *    • otherwise → invites the visitor to book via Calendly
+ *  On submit it:
+ *    1. saves a copy of the inquiry to the backend (POST /api/contact →
+ *       encrypted in Postgres, readable at /admin), in the background;
+ *    2. then, exactly as before:
+ *       • if a business email is set → opens a pre-filled mailto: draft
+ *       • otherwise → invites the visitor to book via Calendly
+ *  Step 1 never blocks or changes step 2. If the backend is down or the site
+ *  is served from a static-only host, visitors see no difference.
+ *
+ *  If the <form> is given an `action` + `method="POST"`, this handler steps aside.
  * ========================================================================== */
 (function () {
   'use strict';
@@ -15,6 +20,26 @@
 
   // If a real backend action is set on the form, let the browser handle it.
   if (form.getAttribute('action')) return;
+
+  // Fire-and-forget save to the backend (src/pages/api/contact.ts).
+  // `keepalive` lets the request finish even if opening the mail app moves the
+  // page along; browsers cap keepalive bodies at 64 KB, so it's only used below that.
+  function saveInquiry(payload) {
+    if (!window.fetch) return;
+    var body = JSON.stringify(payload);
+    try {
+      fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: body,
+        keepalive: new Blob([body]).size < 60000,
+      }).catch(function () {
+        /* offline / backend unavailable — the visible flow below still works */
+      });
+    } catch (err) {
+      /* very old browser — ignore */
+    }
+  }
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
@@ -26,6 +51,15 @@
     var org = (data.get('organization') || '').toString().trim();
     var type = (data.get('projectType') || '').toString().trim();
     var message = (data.get('message') || '').toString().trim();
+
+    saveInquiry({
+      name: name,
+      email: email,
+      organization: org,
+      projectType: type,
+      message: message,
+      website: (data.get('website') || '').toString(), // spam trap; empty for people
+    });
 
     var to = form.dataset.email;
     if (to) {

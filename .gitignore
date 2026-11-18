@@ -25,3 +25,6 @@ npm-debug.log*
 
 # recovered snapshot of the old single-file site (kept locally as reference only)
 current-site.html
+
+# Local Netlify folder
+.netlify

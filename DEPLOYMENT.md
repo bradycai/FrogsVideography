@@ -1,9 +1,11 @@
 # Deployment Guide — Frogs Videography
 
-This site is a **static build** (plain HTML/CSS/JS in `./dist`). It currently
-deploys to **EdgeOne Pages** and is reachable at:
+Every page is a **static build** (plain HTML/CSS/JS in `./dist`). The one
+exception is the **contact-form backend** (`/api/contact` + `/admin`), which needs
+a host that runs server code. That host is **Netlify**: see
+[Netlify setup (backend)](#netlify-setup-backend).
 
-- Preview: **https://frogsvideo.edgeone.dev**
+- EdgeOne preview (static pages only; form submissions aren't stored there): **https://frogsvideo.edgeone.dev**
 - Production domain (target, not yet connected): **https://www.frogsvideography.com**
 
 > 🛑 **Read the [Email safety](#8-how-to-avoid-disrupting-business-email) section
@@ -22,6 +24,46 @@ deploys to **EdgeOne Pages** and is reachable at:
 | Build command      | `npm run build` |
 | Output directory   | `dist`          |
 | Node version       | 20 (see `.nvmrc`) |
+
+---
+
+## Netlify setup (backend)
+
+Netlify reads `netlify.toml` (build command `npm run build`, publish `dist`) and
+`.nvmrc` (Node 20). The Astro Netlify adapter turns `/api/contact` and `/admin`
+into a Netlify Function automatically. There's nothing else to configure.
+
+1. **Create the site.** Netlify → *Add new site* → *Import an existing project*
+   → pick this GitHub repo. Accept the detected settings.
+2. **Create a Postgres database.** Either:
+   - [Neon](https://neon.tech) (free tier): create a project and copy its
+     **pooled** connection string (host contains `-pooler`), **or**
+   - Netlify DB: enable it for the site. Netlify then sets `NETLIFY_DATABASE_URL`
+     for you, so skip `DATABASE_URL` below.
+3. **Create the table** once, from your machine:
+   ```bash
+   DATABASE_URL='postgres://…' npm run db:setup
+   ```
+4. **Generate the secrets** locally:
+   ```bash
+   npm run -s secrets:key        # DATA_ENCRYPTION_KEY=…   (do this ONCE, keep a copy)
+   npm run -s secrets:password   # ADMIN_PASSWORD_HASH=…   (prompts for the password)
+   ```
+5. **Add environment variables** in Netlify → *Site configuration* → *Environment
+   variables*: `DATABASE_URL` (unless using Netlify DB), `DATA_ENCRYPTION_KEY`,
+   `ADMIN_PASSWORD_HASH`. Mark them as secret. Then **redeploy** (*Deploys* →
+   *Trigger deploy*) so the function picks them up.
+6. **Verify:** submit the contact form on the Netlify URL, then sign in at
+   `https://<site>.netlify.app/admin`. The inquiry should be listed. If it isn't,
+   check *Logs* → *Functions* for `[api/contact]` errors.
+
+> 🔐 Store `DATA_ENCRYPTION_KEY` in a password manager too. Netlify keeps it, but
+> if it's ever deleted or changed, stored inquiries can't be decrypted.
+
+**Custom domain on Netlify:** follow sections 4–6 below, but in Netlify →
+*Domain management* instead of the EdgeOne console. Netlify shows the DNS
+targets and provisions HTTPS (Let's Encrypt) automatically. The email-safety
+rules in section 8 apply unchanged.
 
 ---
 
