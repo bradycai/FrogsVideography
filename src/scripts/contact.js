@@ -3,12 +3,13 @@
  *
  *  On submit it:
  *    1. saves a copy of the inquiry to the backend (POST /api/contact →
- *       encrypted in Postgres, readable at /admin), in the background;
- *    2. then, exactly as before:
+ *       encrypted in Postgres, readable at /admin);
+ *    2. then:
  *       • if a business email is set → opens a pre-filled mailto: draft
- *       • otherwise → invites the visitor to book via Calendly
- *  Step 1 never blocks or changes step 2. If the backend is down or the site
- *  is served from a static-only host, visitors see no difference.
+ *       • otherwise → confirms receipt once the backend has stored it, and
+ *         invites the visitor to book via Calendly
+ *  If the backend is down or the site is served from a static-only host,
+ *  step 2 behaves exactly as it did before the backend existed.
  *
  *  If the <form> is given an `action` + `method="POST"`, this handler steps aside.
  * ========================================================================== */
@@ -21,23 +22,34 @@
   // If a real backend action is set on the form, let the browser handle it.
   if (form.getAttribute('action')) return;
 
-  // Fire-and-forget save to the backend (src/pages/api/contact.ts).
+  // Saves a copy to the backend (src/pages/api/contact.ts). Resolves true once
+  // stored, or false on any failure (offline, static-only host, slow/broken
+  // backend) — it never rejects, so the visible flow below always completes.
   // `keepalive` lets the request finish even if opening the mail app moves the
   // page along; browsers cap keepalive bodies at 64 KB, so it's only used below that.
   function saveInquiry(payload) {
-    if (!window.fetch) return;
+    if (!window.fetch) return Promise.resolve(false);
     var body = JSON.stringify(payload);
     try {
-      fetch('/api/contact', {
+      var request = fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: body,
         keepalive: new Blob([body]).size < 60000,
-      }).catch(function () {
-        /* offline / backend unavailable — the visible flow below still works */
+      }).then(
+        function (res) {
+          return res.status === 201;
+        },
+        function () {
+          return false;
+        },
+      );
+      var timeout = new Promise(function (resolve) {
+        setTimeout(resolve, 8000, false);
       });
+      return Promise.race([request, timeout]);
     } catch {
-      /* very old browser — ignore */
+      return Promise.resolve(false); // very old browser
     }
   }
 
@@ -52,7 +64,7 @@
     var type = (data.get('projectType') || '').toString().trim();
     var message = (data.get('message') || '').toString().trim();
 
-    saveInquiry({
+    var saved = saveInquiry({
       name: name,
       email: email,
       organization: org,
@@ -83,10 +95,16 @@
       if (status) status.textContent = 'Opening your email app to send…';
     } else if (status) {
       var cal = form.dataset.calendly;
-      status.innerHTML =
-        'Thanks! Our contact inbox isn’t connected yet — please ' +
-        (cal ? '<a class="green" href="' + cal + '" target="_blank" rel="noopener">book a quick consultation</a>' : 'reach out via Calendly') +
-        ' and we’ll take it from there.';
+      var calLink = cal
+        ? '<a class="green" href="' + cal + '" target="_blank" rel="noopener">book a quick consultation</a>'
+        : 'reach out via Calendly';
+      status.textContent = 'Sending…';
+      // Only say the message arrived once the backend confirms it was stored.
+      saved.then(function (ok) {
+        status.innerHTML = ok
+          ? 'Thanks — we’ve received your message! For the fastest response, ' + calLink + '.'
+          : 'Thanks! Our contact inbox isn’t connected yet — please ' + calLink + ' and we’ll take it from there.';
+      });
     }
   });
 })();

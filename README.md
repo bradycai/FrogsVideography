@@ -148,15 +148,15 @@ Setting one to `false` removes it from the page **without deleting any code**.
 
 When a visitor submits the contact form, `src/scripts/contact.js`:
 
-1. **Saves the inquiry** in the background: `POST /api/contact` encrypts it and
-   stores it in Postgres.
-2. **Then does exactly what it always did.** If `BUSINESS.email` is set, it opens
-   a pre-filled email draft (`mailto:`). Otherwise it points visitors to the
-   Calendly booking link.
+1. **Saves the inquiry:** `POST /api/contact` encrypts it and stores it in Postgres.
+2. **Responds to the visitor.** If `BUSINESS.email` is set, it opens a pre-filled
+   email draft (`mailto:`). Otherwise it confirms "we've received your message"
+   once the backend has stored it, and points visitors to the Calendly booking link.
 
-Step 1 never blocks or changes step 2. If the backend is down or not configured,
-or the site is served from a static-only host such as the EdgeOne preview,
-visitors see no difference. The submission just isn't stored.
+If the backend is down or not configured, or the site is served from a
+static-only host such as the EdgeOne preview, the form falls back to its
+original "inbox isn't connected yet — book a consultation" message. It never
+claims a message arrived unless it was actually stored.
 
 Owners read inquiries at **`/admin`** (password-protected, newest first, with a
 note when the same person has written more than once).

@@ -29,9 +29,9 @@ const telHref = phone ? 'tel:' + phone.replace(/[^+\d]/g, '') : '';
     {/*
       CONTACT FORM — src/scripts/contact.js handles submit:
         1. Saves the inquiry (encrypted) to Postgres via POST /api/contact,
-           viewable at /admin. This runs in the background.
-        2. Then, as before, opens a pre-filled mailto: draft when BUSINESS.email
-           is set, or points visitors to Calendly.
+           viewable at /admin.
+        2. Then opens a pre-filled mailto: draft when BUSINESS.email is set, or
+           confirms receipt and points visitors to Calendly.
       See README.md → "Contact form & backend".
       (JSX-style comments like this one are not shipped in the page's HTML.)
     */}
