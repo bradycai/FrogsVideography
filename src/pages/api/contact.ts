@@ -1,18 +1,20 @@
 /* ============================================================================
  *  POST /api/contact — stores a contact-form inquiry (runs as a Netlify Function).
  *
- *  Called in the background by src/scripts/contact.js. The visitor-facing form
- *  behaves the same whether or not this succeeds; this endpoint only keeps a
- *  record of every inquiry so none are lost.
+ *  Called by src/scripts/contact.js on submit. The form only tells the visitor
+ *  their message was received when this returns 201; on any other response it
+ *  falls back to its original Calendly prompt.
  *
- *  Responses: 201 saved · 400 invalid · 413 too large · 429 rate-limited · 500 error
+ *  Responses: 201 saved · 400 invalid · 413 too large · 415 not JSON ·
+ *             429 rate-limited · 500 error
  * ========================================================================== */
 import type { APIRoute } from 'astro';
 import { isRateLimited, parseInquiry, saveInquiry } from '../../lib/inquiries';
 
 export const prerender = false;
 
-const MAX_BODY_BYTES = 100_000;
+/** Characters, not bytes — far above the per-field limits in src/lib/inquiries.ts. */
+const MAX_BODY_LENGTH = 100_000;
 
 function json(status: number, body: Record<string, unknown>): Response {
   return new Response(JSON.stringify(body), {
@@ -28,8 +30,9 @@ export const POST: APIRoute = async (context) => {
     return json(415, { ok: false, error: 'Send JSON.' });
   }
   const text = await request.text();
-  if (text.length > MAX_BODY_BYTES)
+  if (text.length > MAX_BODY_LENGTH) {
     return json(413, { ok: false, error: 'Submission is too large.' });
+  }
 
   let body: unknown;
   try {
